@@ -47,7 +47,7 @@ To create DynamoDB table manually (if required): <br>
 aws dynamodb create-table --table-name terraform-locks --attribute-definitions AttributeName=LockID,AttributeType=S --key-schema AttributeName=LockID,KeyType=HASH --billing-mode PAY_PER_REQUEST --region us-west-2
 ```
 
-2.  Confirm table creation
+Confirm table creation
 ```
 aws dynamodb list-tables --region us-west-2
 You should see:
@@ -61,17 +61,17 @@ You should see:
 
 ## How to Deploy
 
-1. Initialize Terragrunt:
+Initialize Terragrunt:
 
 ```bash
 cd live/dev/s3
 terragrunt init
 ```
-2. Apply changes:
+Apply changes:
 ```
 terragrunt apply
 ```
-3. Repeat for test and prod folders.
+Repeat for test and prod folders.
 
 <img width="1106" height="834" alt="Snímek obrazovky 2025-11-23 152633" src="https://github.com/user-attachments/assets/ebee13cb-160b-4531-bbf7-5dcc85afc555" />
 
