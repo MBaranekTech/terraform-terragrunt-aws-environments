@@ -36,8 +36,13 @@ terraform-terragrunt-aws-environments/
 └── .gitignore
 
 ```
+🔐 Remote State & Locking
 
-1. Create DYNAMODB
+This setup uses: <br>
+S3 bucket: for storing Terraform state <br>
+DynamoDB table: for locking to prevent concurrent state writes <br>
+To create DynamoDB table manually (if required): <br>
+
 ```
 aws dynamodb create-table --table-name terraform-locks --attribute-definitions AttributeName=LockID,AttributeType=S --key-schema AttributeName=LockID,KeyType=HASH --billing-mode PAY_PER_REQUEST --region us-west-2
 ```
@@ -71,7 +76,7 @@ terragrunt apply
 <img width="1106" height="834" alt="Snímek obrazovky 2025-11-23 152633" src="https://github.com/user-attachments/assets/ebee13cb-160b-4531-bbf7-5dcc85afc555" />
 
 
-Cleanup
+## 🧹 Cleanup / Destroy
 To remove all resources:
 ```
 terragrunt destroy -auto-approve
@@ -79,7 +84,15 @@ aws s3 rb s3://<state-bucket> --force --region <region>
 aws dynamodb delete-table --table-name <lock-table> --region <region>
 
 # Destroy Terraform-managed resources
+cd live/dev/s3  
+terragrunt destroy -auto-approve  
+
+cd ../test/s3  
+terragrunt destroy -auto-approve  
+
+cd ../prod/s3  
 terragrunt destroy -auto-approve
+
 
 # Remove the S3 backend bucket
 aws s3 rb s3://my-tf-state-bucket-martin-001 --force --region us-west-2
@@ -87,3 +100,10 @@ aws s3 rb s3://my-tf-state-bucket-martin-001 --force --region us-west-2
 # Delete the DynamoDB state locking table
 aws dynamodb delete-table --table-name terraform-locks --region us-west-2
 ```
+## 🧠 Why This Matters
+
+Scalable: Add more environments/modules without duplicating code <br>
+Safe: Remote state + locking prevents race conditions <br>
+Reusable: Terraform modules can be shared or extended <br>
+Secure: State is encrypted and managed in a centralized place <br>
+Maintainable: Clear folder structure and separation of concerns <br>
